@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace AsyncAwait.ViewModels
@@ -36,6 +37,10 @@ namespace AsyncAwait.ViewModels
         }
 
         public void ClearStatus() => Status = string.Empty;
+
+        public void PrintThreadCheck(bool addSpacing = true) => Status += $"{(addSpacing ? "\n" : "")}" +
+            $"==={(MainThread.IsMainThread ? "Is" : "Not")} on MainThread===\n" +
+            $"{(addSpacing ? "\n" : "")}";
 
         #region Forms BaseViewModel
         bool isBusy = false;

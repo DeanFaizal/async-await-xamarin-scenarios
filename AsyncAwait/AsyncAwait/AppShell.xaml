@@ -39,6 +39,9 @@
     <FlyoutItem Title="Awaiting Tasks">
         <views:AwaitingTasksPage/>
     </FlyoutItem>
+    <FlyoutItem Title="ConfigureAwait">
+        <views:ConfigureAwaitPage/>
+    </FlyoutItem>
     <FlyoutItem Title="Synchronous Async">
         <views:SynchronousAsyncPage/>
     </FlyoutItem>

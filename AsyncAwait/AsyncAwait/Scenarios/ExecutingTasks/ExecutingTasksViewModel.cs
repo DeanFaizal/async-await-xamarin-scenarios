@@ -21,11 +21,10 @@ namespace AsyncAwait.ViewModels
         private Command _taskRunCommand;
         public Command TaskRunCommand =>
             _taskRunCommand ?? (_taskRunCommand = new Command(() =>
-            Task.Run(() =>
-            {
+            { 
                 Status = string.Empty;
-                TaskService.GetStringWithNewTaskAsync("Task.Run()");
-            })));
+                TaskService.GetStringWithTaskRunAsync("Task.Run()");
+            }));
 
         private Command _runSynchronouslyCommand;
         public Command RunSynchronouslyCommand =>

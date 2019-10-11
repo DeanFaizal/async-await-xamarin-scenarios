@@ -25,8 +25,7 @@ namespace AsyncAwait.ViewModels
             var result = await TaskService.GetStringWithTaskRunAsync("Task.Run");
             Status += "Command returning\n";
         }));
-
-
+        
         private Command _noAwaitTaskRunCommand;
         public Command NoAwaitTaskRunCommand => _noAwaitTaskRunCommand ?? (_noAwaitTaskRunCommand = new Command(() =>
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncAwait.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -19,40 +20,37 @@ namespace AsyncAwait.Services
         public void RaiseTaskCreated(Task task, [CallerMemberName] string caller = default)
         {
             var status = $"[Created] Task from {caller}";
+
             TaskCreated?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
         public void RaiseTaskStarting(Task task, [CallerMemberName] string caller = default)
         {
-            var status = $"[Started] Task from {caller} ";
-            if (MainThread.IsMainThread)
-            {
-                status += "on MainThread!!";
-            }
+            var status = $"[Started] Task from {caller} ".AppendMainThreadAlert();
             TaskStarting?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
         public void RaiseTaskCompleted(Task task, string caller = default)
         {
-            var status = $"[Completed] Task from {caller}. status: {task.Status}";
+            var status = $"[Completed] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
             TaskCompleted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
         public void RaiseTaskFaulted(Task task, [CallerMemberName] string caller = default)
         {
-            var status = $"[Faulted] Task from {caller}. status: {task.Status}";
-            TaskCompleted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
+            var status = $"[Faulted] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
+            TaskFaulted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
         public void RaiseTaskCancelled(Task task, [CallerMemberName] string caller = default)
         {
-            var status = $"[Cancelled] Task from {caller}. status: {task.Status}";
-            TaskCompleted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
+            var status = $"[Cancelled] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
+            TaskCancelled?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
         private void ConsoleWriteTaskFaulted([CallerMemberName] string caller = default) => Console.WriteLine($"Task from {caller} faulted");
 
-        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string callerId = default, int delaySeconds = 3, string taskResult = "Task Result")
+        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
         {
             Task<string> getStringTask = default;
             getStringTask = new Task<string>(() =>
@@ -82,9 +80,8 @@ namespace AsyncAwait.Services
 
             return getStringTask;
         }
-        public Task<string> GetStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 3, string taskResult = "Task Result")
+        public Task<string> GetStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
         {
-            Task.Run(() => { });
             Task<string> getStringTask = default;
             getStringTask = Task.Run(() =>
             {
@@ -114,7 +111,7 @@ namespace AsyncAwait.Services
             return getStringTask;
         }
 
-        public async Task<string> AwaitStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 3, string taskResult = "Task Result")
+        public async Task<string> AwaitStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
         {
             return await GetStringWithTaskRunAsync(callerId);
         }
