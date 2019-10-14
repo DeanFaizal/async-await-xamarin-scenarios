@@ -32,13 +32,16 @@ namespace AsyncAwait.ViewModels
         private void HandleTaskStatusUpdated(object sender, TaskStatusChangedEventArgs status)
         {
             Console.WriteLine(status.Status);
-            //Device.BeginInvokeOnMainThread(() => Status += $"{status}\n");
-            Status += $"{status.Status}\n";
+            PrintStatus($"{status.Status}");
         }
 
-        public void ClearStatus() => Status = string.Empty;
+        protected void ClearStatus() => Status = string.Empty;
 
-        public void PrintThreadCheck(bool addSpacing = true) => Status += $"{(addSpacing ? "\n" : "")}" +
+        protected void PrintStatus(string input) => Status += $"{input}\n";
+
+        protected void PrintDot() => Status += ".";
+
+        protected void PrintThreadCheck(bool addSpacing = true) => Status += $"{(addSpacing ? "\n" : "")}" +
             $"==={(MainThread.IsMainThread ? "Is" : "Not")} on MainThread===\n" +
             $"{(addSpacing ? "\n" : "")}";
 

@@ -14,15 +14,15 @@ namespace AsyncAwait.ViewModels
         public Command InvokeTaskCommand =>
             _invokeTaskCommand ?? (_invokeTaskCommand = new Command(() =>
             {
-                Status = string.Empty;
+                ClearStatus();
                 TaskService.GetStringWithNewTaskAsync("GetStringAsync()");
             }));
 
         private Command _taskRunCommand;
         public Command TaskRunCommand =>
             _taskRunCommand ?? (_taskRunCommand = new Command(() =>
-            { 
-                Status = string.Empty;
+            {
+                ClearStatus();
                 TaskService.GetStringWithTaskRunAsync("Task.Run()");
             }));
 
@@ -30,7 +30,7 @@ namespace AsyncAwait.ViewModels
         public Command RunSynchronouslyCommand =>
             _runSynchronouslyCommand ?? (_runSynchronouslyCommand = new Command(() =>
             {
-                Status = string.Empty;
+                ClearStatus();
                 TaskService.GetStringWithNewTaskAsync("RunSynchronously()").RunSynchronously();
             }));
 
@@ -40,7 +40,7 @@ namespace AsyncAwait.ViewModels
             _continueWithCommand ?? (_continueWithCommand = new Command(() =>
             {
                 ClearStatus();
-                TaskService.GetStringWithNewTaskAsync().ContinueWith(task => Status += "ContinueWith()\n");
+                TaskService.GetStringWithNewTaskAsync().ContinueWith(task => PrintStatus("ContinueWith()"));
             }));
 
 
@@ -57,9 +57,9 @@ namespace AsyncAwait.ViewModels
             ClearStatus();
             var task = TaskService.GetStringWithNewTaskAsync(".Start()");
             task.Start();
-            Status += $"Current task status: {task.Status}";
+            PrintStatus($"Current task status: {task.Status}");
             task.Wait();
-            Status += $"Current task status: {task.Status}";
+            PrintStatus($"Current task status: {task.Status}");
         }));
 
         private Command _waitCommand;
@@ -78,7 +78,7 @@ namespace AsyncAwait.ViewModels
             Device.OpenUri(new Uri("https://montemagno.com/c-sharp-developers-stop-calling-dot-result/"));
             var result = TaskService.GetStringWithNewTaskAsync(".Result").Result;
         }));
-                     
+
         private Command _resultInTaskRunCommand;
         public Command ResultInTaskRunCommand => _resultInTaskRunCommand ?? (_resultInTaskRunCommand = new Command(() =>
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncAwait.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace AsyncAwait.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SynchronousAsyncPage : ContentPage
+    public partial class MultipleTasksPage : ContentPage
     {
-        public SynchronousAsyncPage()
+        public MultipleTasksPage()
         {
             InitializeComponent();
+            BindingContext = new MultipleTasksViewModel();
         }
     }
 }

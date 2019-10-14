@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="AsyncAwait.Views.ConfigureAwaitPage">
+             x:Class="AsyncAwait.Views.MultipleTasksPage">
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -12,15 +12,18 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="6*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <ScrollView Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand">
                 <Label LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
             </ScrollView>
-            <Button Grid.Row="1" Command="{Binding NoConfigureAwaitCommand}" Text="No configure await"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding ConfigureAwaitFalseCommand}" Text="ConfigureAwait(false)"/>
+            <Button Grid.Row="1" Command="{Binding WhenAnyCommand}" Text="WhenAny"/>
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding WhenAllCommand}" Text="WhenAll"/>
+            <Button Grid.Row="2" Command="{Binding WaitAnyCommand}" Text="WaitAny"/>
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding WaitAllCommand}" Text="WaitAll"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

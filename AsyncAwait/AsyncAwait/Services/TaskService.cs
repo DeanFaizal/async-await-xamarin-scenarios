@@ -17,103 +17,263 @@ namespace AsyncAwait.Services
         public event EventHandler<TaskStatusChangedEventArgs> TaskFaulted;
         public event EventHandler<TaskStatusChangedEventArgs> TaskCancelled;
 
-        public void RaiseTaskCreated(Task task, [CallerMemberName] string caller = default)
+        public void RaiseTaskCreated(Task task, [CallerMemberName] string taskName = default)
         {
-            var status = $"[Created] Task from {caller}";
+            var status = $"[Created] Task: {taskName}";
 
             TaskCreated?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        public void RaiseTaskStarting(Task task, [CallerMemberName] string caller = default)
+        public void RaiseTaskStarting(Task task, [CallerMemberName] string taskName = default)
         {
-            var status = $"[Started] Task from {caller} ".AppendMainThreadAlert();
+            var status = $"[Started] Task: {taskName} ".AppendMainThreadAlert();
             TaskStarting?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        public void RaiseTaskCompleted(Task task, string caller = default)
+        public void RaiseTaskCompleted(Task task, string taskName = default)
         {
-            var status = $"[Completed] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
+            var status = $"[Completed] Task: {taskName}. status: {task.Status}".AppendMainThreadAlert();
             TaskCompleted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        public void RaiseTaskFaulted(Task task, [CallerMemberName] string caller = default)
+        public void RaiseTaskFaulted(Task task, [CallerMemberName] string taskName = default)
         {
-            var status = $"[Faulted] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
+            var status = $"[Faulted] Task: {taskName}. status: {task.Status}".AppendMainThreadAlert();
             TaskFaulted?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        public void RaiseTaskCancelled(Task task, [CallerMemberName] string caller = default)
+        public void RaiseTaskCancelled(Task task, [CallerMemberName] string taskName = default)
         {
-            var status = $"[Cancelled] Task from {caller}. status: {task.Status}".AppendMainThreadAlert();
+            var status = $"[Cancelled] Task: {taskName}. status: {task.Status}".AppendMainThreadAlert();
             TaskCancelled?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        private void ConsoleWriteTaskFaulted([CallerMemberName] string caller = default) => Console.WriteLine($"Task from {caller} faulted");
-
-        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
+        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string taskName = default, int delaySeconds = 2, string taskResult = "Task Result")
         {
             Task<string> getStringTask = default;
             getStringTask = new Task<string>(() =>
             {
-                RaiseTaskStarting(getStringTask, callerId);
+                RaiseTaskStarting(getStringTask, taskName);
                 Thread.Sleep((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds); //Use Thread.Sleep to block the current thread. https://stackoverflow.com/questions/20082221/when-to-use-task-delay-when-to-use-thread-sleep
                 return taskResult;
             });
 
-            RaiseTaskCreated(getStringTask, callerId);
+            RaiseTaskCreated(getStringTask, taskName);
 
             getStringTask.ContinueWith(completedGetStringTask =>
             {
                 if (completedGetStringTask.IsCanceled)
                 {
-                    RaiseTaskCancelled(completedGetStringTask, callerId);
+                    RaiseTaskCancelled(completedGetStringTask, taskName);
                 }
                 else if (completedGetStringTask.IsFaulted)
                 {
-                    RaiseTaskFaulted(completedGetStringTask, callerId);
+                    RaiseTaskFaulted(completedGetStringTask, taskName);
                 }
                 else
                 {
-                    RaiseTaskCompleted(completedGetStringTask, callerId);
+                    RaiseTaskCompleted(completedGetStringTask, taskName);
                 }
             });
 
             return getStringTask;
         }
-        public Task<string> GetStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
+
+        public Task<string> GetStringWithTaskRunAsync([CallerMemberName] string taskName = default,
+            int delaySeconds = 2,
+            string taskResult = "Task Result",
+            CancellationToken cancellationToken = default,
+            Action taskAction = default)
         {
             Task<string> getStringTask = default;
             getStringTask = Task.Run(() =>
             {
-                RaiseTaskStarting(getStringTask, callerId);
-                Thread.Sleep((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds); //Use Thread.Sleep to block the current thread. https://stackoverflow.com/questions/20082221/when-to-use-task-delay-when-to-use-thread-sleep
-                return taskResult;
-            });
+                RaiseTaskStarting(getStringTask, taskName);
+                var elapsedSeconds = 0;
+                while (elapsedSeconds < delaySeconds)
+                {
+                    //Simulate work
+                    Thread.Sleep((int)TimeSpan.FromSeconds(1).TotalMilliseconds); //Use Thread.Sleep to block the current thread. https://stackoverflow.com/questions/20082221/when-to-use-task-delay-when-to-use-thread-sleep
+                    elapsedSeconds++;
 
-            RaiseTaskCreated(getStringTask, callerId);
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                taskAction?.Invoke();
+
+                return taskResult;
+            }, cancellationToken: cancellationToken);
+
+            RaiseTaskCreated(getStringTask, taskName);
 
             getStringTask.ContinueWith(completedGetStringTask =>
             {
                 if (completedGetStringTask.IsCanceled)
                 {
-                    RaiseTaskCancelled(completedGetStringTask, callerId);
+                    RaiseTaskCancelled(completedGetStringTask, taskName);
                 }
                 else if (completedGetStringTask.IsFaulted)
                 {
-                    RaiseTaskFaulted(completedGetStringTask, callerId);
+                    RaiseTaskFaulted(completedGetStringTask, taskName);
                 }
                 else
                 {
-                    RaiseTaskCompleted(completedGetStringTask, callerId);
+                    RaiseTaskCompleted(completedGetStringTask, taskName);
                 }
             });
 
             return getStringTask;
         }
 
-        public async Task<string> AwaitStringWithTaskRunAsync([CallerMemberName] string callerId = default, int delaySeconds = 2, string taskResult = "Task Result")
+        public async Task<string> AwaitStringWithTaskRunAsync([CallerMemberName] string taskName = default,
+            int delaySeconds = 2,
+            string taskResult = "Task Result")
         {
-            return await GetStringWithTaskRunAsync(callerId);
+            return await GetStringWithTaskRunAsync(taskName);
+        }
+
+        public Task GetFireAndForgetTask([CallerMemberName] string taskName = default,
+            int delaySeconds = 2,
+            CancellationToken cancellationToken = default)
+        {
+
+            Task fireAndForgetTask = default;
+            fireAndForgetTask = Task.Run(() =>
+            {
+                RaiseTaskStarting(fireAndForgetTask, taskName);
+                var elapsedSeconds = 0;
+                while (elapsedSeconds < delaySeconds)
+                {
+                    //Simulate work
+                    Thread.Sleep((int)TimeSpan.FromSeconds(1).TotalMilliseconds); //Use Thread.Sleep to block the current thread. https://stackoverflow.com/questions/20082221/when-to-use-task-delay-when-to-use-thread-sleep
+                    elapsedSeconds++;
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+            }, cancellationToken: cancellationToken);
+
+            RaiseTaskCreated(fireAndForgetTask, taskName);
+
+            fireAndForgetTask.ContinueWith(completedGetStringTask =>
+            {
+                if (completedGetStringTask.IsCanceled)
+                {
+                    RaiseTaskCancelled(completedGetStringTask, taskName);
+                }
+                else if (completedGetStringTask.IsFaulted)
+                {
+                    RaiseTaskFaulted(completedGetStringTask, taskName);
+                }
+                else
+                {
+                    RaiseTaskCompleted(completedGetStringTask, taskName);
+                }
+            });
+
+            return fireAndForgetTask;
+        }
+
+        public Task<string> GetStringWithTaskCompletionSource([CallerMemberName] string taskName = default,
+            int delaySeconds = 2,
+            string taskResult = "Task Result",
+            CancellationToken cancellationToken = default,
+            Action taskAction = default)
+        {
+            var taskCompletionSource = new TaskCompletionSource<string>();
+
+            var taskCompletionSourceTask = Task.Run(() =>
+            {
+                try
+                {
+                    Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+
+                    taskAction?.Invoke();
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        taskCompletionSource.TrySetCanceled(cancellationToken);
+                    }
+                    else
+                    {
+                        taskCompletionSource.TrySetResult(taskResult);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    taskCompletionSource.TrySetException(ex);
+                }
+            });
+
+            RaiseTaskCreated(taskCompletionSourceTask, taskName);
+
+            taskCompletionSourceTask.ContinueWith(completedGetStringTask =>
+            {
+                if (completedGetStringTask.IsCanceled)
+                {
+                    RaiseTaskCancelled(completedGetStringTask, taskName);
+                }
+                else if (completedGetStringTask.IsFaulted)
+                {
+                    RaiseTaskFaulted(completedGetStringTask, taskName);
+                }
+                else
+                {
+                    RaiseTaskCompleted(completedGetStringTask, taskName);
+                }
+            });
+
+            return taskCompletionSource.Task;
+        }
+        public Task<string> GetStringWithTaskCompletionSourceTheWrongWay(string taskName = default,
+            int delaySeconds = 2,
+            string taskResult = "Task Result",
+            CancellationToken cancellationToken = default,
+            Action taskAction = default)
+        {
+            var taskCompletionSource = new TaskCompletionSource<string>();
+
+            var taskCompletionSourceTask = Task.Run(() =>
+            {
+                //try
+                //{
+                Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+
+                taskAction?.Invoke();
+
+                //if (cancellationToken.IsCancellationRequested)
+                //{
+                //    taskCompletionSource.TrySetCanceled(cancellationToken);
+                //}
+                //else
+                //{
+                taskCompletionSource.TrySetResult(taskResult);
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    taskCompletionSource.TrySetException(ex);
+                //}
+            });
+
+            RaiseTaskCreated(taskCompletionSourceTask, taskName);
+
+            taskCompletionSourceTask.ContinueWith(completedGetStringTask =>
+            {
+                if (completedGetStringTask.IsCanceled)
+                {
+                    RaiseTaskCancelled(completedGetStringTask, taskName);
+                }
+                else if (completedGetStringTask.IsFaulted)
+                {
+                    RaiseTaskFaulted(completedGetStringTask, taskName);
+                }
+                else
+                {
+                    RaiseTaskCompleted(completedGetStringTask, taskName);
+                }
+            });
+
+            return taskCompletionSource.Task;
         }
     }
 }

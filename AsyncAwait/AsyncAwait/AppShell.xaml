@@ -30,6 +30,12 @@
     </Shell.Resources>
 
     <!-- Your Pages -->
+    <FlyoutItem>
+        <ShellContent Title="How Not To Use Tasks 1"
+                  ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
+        <ShellContent Title="How Not To Use Tasks 2"
+                  ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Welcome Page">
         <views:WelcomePage/>
     </FlyoutItem>
@@ -42,12 +48,11 @@
     <FlyoutItem Title="ConfigureAwait">
         <views:ConfigureAwaitPage/>
     </FlyoutItem>
-    <FlyoutItem Title="Synchronous Async">
-        <views:SynchronousAsyncPage/>
+    <FlyoutItem Title="Multiple Tasks">
+        <views:MultipleTasksPage/>
     </FlyoutItem>
-    <FlyoutItem Title="ConfigureAwait">
-        <views:ConfigureAwaitPage/>
-    </FlyoutItem>
+
+
 
     <!-- Optional Templates 
     // These may be provided inline as below or as separate classes.
