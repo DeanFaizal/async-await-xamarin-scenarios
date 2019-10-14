@@ -30,14 +30,17 @@
     </Shell.Resources>
 
     <!-- Your Pages -->
-    <FlyoutItem>
-        <ShellContent Title="How Not To Use Tasks 1"
-                  ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
-        <ShellContent Title="How Not To Use Tasks 2"
-                  ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
-    </FlyoutItem>
     <FlyoutItem Title="Welcome Page">
         <views:WelcomePage/>
+    </FlyoutItem>
+    <FlyoutItem Title="Bad Examples 1">
+        <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Bad Examples 2">
+        <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage2}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Bad Examples 3">
+        <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage3}"/>
     </FlyoutItem>
     <FlyoutItem Title="Executing Tasks">
         <views:ExecutingTasksPage/>

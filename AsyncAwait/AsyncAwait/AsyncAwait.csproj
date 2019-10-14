@@ -12,9 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Views\AsyncScenariosPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Scenarios\ConfigureAwait\ConfigureAwaitPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -30,7 +27,10 @@
     <EmbeddedResource Update="Views\BadExamplesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\TaskVisualizerPage.xaml">
+    <EmbeddedResource Update="Views\BadExamplesPage2.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\BadExamplesPage3.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\WelcomePage.xaml">
@@ -40,5 +40,8 @@
 
   <ItemGroup>
     <Folder Include="Scenarios\HowNotToUseAsync\" />
+    <Folder Include="Scenarios\BadExamples1\" />
+    <Folder Include="Scenarios\BadExamples2\" />
+    <Folder Include="Scenarios\BadExamples3\" />
   </ItemGroup>
 </Project>

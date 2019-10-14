@@ -99,7 +99,7 @@ namespace AsyncAwait.ViewModels
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var taskCount = 1000;
+            var taskCount = 100;
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {
@@ -122,7 +122,7 @@ namespace AsyncAwait.ViewModels
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var taskCount = 1000;
+            var taskCount = 100;
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {

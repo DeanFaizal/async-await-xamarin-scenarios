@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsyncAwait.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace AsyncAwait.Views
         public BadExamplesPage()
         {
             InitializeComponent();
+            BindingContext = new BadExamplesViewModel();
         }
     }
 }

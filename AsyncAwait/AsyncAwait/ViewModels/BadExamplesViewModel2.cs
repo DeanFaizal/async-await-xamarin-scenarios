@@ -16,6 +16,13 @@ namespace AsyncAwait.ViewModels
 
         #region Example: Updating VM properties from background thread
 
+        private bool _isListViewVisible;
+        public bool IsListViewVisible
+        {
+            get => _isListViewVisible;
+            set => SetProperty(ref _isListViewVisible, value);
+        }
+
         private ObservableCollection<string> _listItems;
         public ObservableCollection<string> ListItems
         {
@@ -26,6 +33,7 @@ namespace AsyncAwait.ViewModels
         private AsyncCommand _badViewModelUpdateCommand;
         public AsyncCommand BadViewModelUpdateCommand => _badViewModelUpdateCommand ?? (_badViewModelUpdateCommand = new AsyncCommand(async () =>
         {
+            IsListViewVisible = true;
             //From background thread
             ClearStatus();
             PrintStatus("Command starting");
@@ -34,14 +42,19 @@ namespace AsyncAwait.ViewModels
             ListItems = new ObservableCollection<string> { "Item 1", "Item 2" };
             var taskResult = await TaskService.GetStringWithTaskRunAsync().ConfigureAwait(false);
             PrintThreadCheck();
+            PrintStatus("Adding item to ListView");
             ListItems.Add(taskResult);
+            PrintStatus("Added item to ListView");
 
             PrintStatus("Command ending");
+            Thread.Sleep((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+            IsListViewVisible = false;
         }));
 
         private AsyncCommand _goodViewModelUpdateCommand;
         public AsyncCommand GoodViewModelUpdateCommand => _goodViewModelUpdateCommand ?? (_goodViewModelUpdateCommand = new AsyncCommand(async () =>
         {
+            IsListViewVisible = true;
             //From ui thread
             ClearStatus();
             PrintStatus("Command starting");
@@ -54,10 +67,14 @@ namespace AsyncAwait.ViewModels
             Device.BeginInvokeOnMainThread(() =>
             {
                 PrintThreadCheck();
+                PrintStatus("Adding item to ListView");
                 ListItems.Add(taskResult);
+                PrintStatus("Added item to ListView");
             });
 
             PrintStatus("Command ending");
+            Thread.Sleep((int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+            IsListViewVisible = false;
         }));
 
         #endregion
@@ -79,9 +96,8 @@ namespace AsyncAwait.ViewModels
                     throw new Exception("My Exception");
                 };
 
-                await TaskService.GetStringWithTaskRunAsync(taskName: "TaskWithException",
+                TaskService.GetFireAndForgetTask(taskName: "TaskWithException",
                     delaySeconds: 2,
-                    taskResult: "TaskResult",
                     cancellationToken: default,
                     taskAction: exceptionAction);
             }
@@ -104,9 +120,8 @@ namespace AsyncAwait.ViewModels
                 throw new Exception("My Exception");
             };
 
-            await TaskService.GetStringWithTaskRunAsync(taskName: "TaskWithException",
+            TaskService.GetFireAndForgetTask(taskName: "TaskWithException",
                 delaySeconds: 2,
-                taskResult: "TaskResult",
                 cancellationToken: default,
                 taskAction: exceptionAction)
             .ContinueWith(continuationAction: (task) =>
@@ -129,11 +144,20 @@ namespace AsyncAwait.ViewModels
             ClearStatus();
             PrintStatus("Command starting");
 
-            var longRunningTask = Task.Delay(TimeSpan.FromSeconds(60));
+            var longRunningTask = TaskService.GetStringWithTaskRunAsync("60 second Task",
+                   delaySeconds: 60,
+                   taskResult: "TaskResult");
             var tasks = new Task[] { longRunningTask };
-            Task.WaitAll(tasks, timeout: TimeSpan.FromSeconds(3));
 
-            PrintStatus("Command ending");
+            var timeoutSeconds = 3;
+            PrintStatus($"Task will timeout in {timeoutSeconds} seconds..");
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Task.WaitAll(tasks, timeout: TimeSpan.FromSeconds(timeoutSeconds));
+
+            stopwatch.Stop();
+            PrintStatus($"Command ending after {stopwatch.Elapsed.TotalSeconds}s");
         }));
 
 
@@ -144,14 +168,29 @@ namespace AsyncAwait.ViewModels
             PrintStatus("Command starting");
 
             var longRunningTaskCompletionSource = new TaskCompletionSource<string>();
-            var cancellationTokenSource = new CancellationTokenSource(delay: TimeSpan.FromSeconds(3));
+            var timeoutSeconds = 3;
+            var cancellationTokenSource = new CancellationTokenSource(delay: TimeSpan.FromSeconds(timeoutSeconds));
+            var stopwatch = new Stopwatch();
 
-            await TaskService.GetStringWithTaskRunAsync("LongRunningTask",
-                delaySeconds: 60,
-                taskResult: "TaskResult",
-                cancellationTokenSource.Token);
+            try
+            {
+                PrintStatus($"Task will timeout in {timeoutSeconds} seconds..");
 
-            PrintStatus("Command ending");
+                stopwatch.Start();
+                await TaskService.GetStringWithTaskRunAsync("60 second Task",
+                    delaySeconds: 60,
+                    taskResult: "TaskResult",
+                    cancellationTokenSource.Token);
+            }
+            catch (Exception ex)
+            {
+                PrintStatus($"An exception occurred: {ex.Message}");
+            }
+            finally
+            {
+                stopwatch.Stop();
+                PrintStatus($"Command ending after {stopwatch.Elapsed.TotalSeconds}s");
+            }
         }));
 
         #endregion
@@ -170,7 +209,7 @@ namespace AsyncAwait.ViewModels
             stopwatch.Start();
             Action exceptionAction = () => throw new Exception("My Exception");
 
-            var taskCount = 1000;
+            var taskCount = 10;
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {
@@ -182,6 +221,10 @@ namespace AsyncAwait.ViewModels
                 tasks[i] = task;
             }
 
+            //foreach (var task in tasks)
+            //{
+            //    await task;
+            //}
             await Task.WhenAll(tasks);
             stopwatch.Stop();
 
@@ -199,7 +242,7 @@ namespace AsyncAwait.ViewModels
             stopwatch.Start();
             Action exceptionAction = () => throw new Exception("My Exception");
 
-            var taskCount = 1000;
+            var taskCount = 10;
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {
@@ -211,91 +254,10 @@ namespace AsyncAwait.ViewModels
                 tasks[i] = task;
             }
 
-            await Task.WhenAll(tasks);
-            stopwatch.Stop();
-
-            PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
-        }));
-
-        #endregion
-
-
-
-        #region Example: Not using longrunning tasks
-
-        private AsyncCommand _badLongRunningTaskCommand;
-        public AsyncCommand BadLongRunningTaskCommand => _badLongRunningTaskCommand ?? (_badLongRunningTaskCommand = new AsyncCommand(async () =>
-        {
-            ClearStatus();
-            PrintStatus("Command starting");
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            var taskCount = 1000;
-
-            Task[] longRunningTasks = new Task[taskCount];
-
-            for (int i = 0; i < taskCount; i++)
-            {
-                //Fire and forget long running task
-                Task.Run(() =>
-                {
-                    PrintDot();
-                    Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromDays(10).TotalMilliseconds);
-                });
-            }
-
-            Task<string>[] tasks = new Task<string>[taskCount];
-            for (int i = 0; i < taskCount; i++)
-            {
-                var task = TaskService.GetStringWithTaskRunAsync($"Task {i}");
-                tasks[i] = task;
-            }
-
-            await Task.WhenAll(tasks);
-            stopwatch.Stop();
-
-            PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
-
-            PrintStatus("Command ending");
-        }));
-
-
-        private AsyncCommand _goodLongRunningTaskCommand;
-        public AsyncCommand GoodLongRunningTaskCommand => _goodLongRunningTaskCommand ?? (_goodLongRunningTaskCommand = new AsyncCommand(async () =>
-        {
-            ClearStatus();
-            PrintStatus("Command starting");
-
-
-            ClearStatus();
-            PrintStatus("Command starting");
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            var taskCount = 1000;
-
-            Task[] longRunningTasks = new Task[taskCount];
-
-            for (int i = 0; i < taskCount; i++)
-            {
-                //Fire and forget long running task
-                Task.Factory.StartNew(() =>
-                    {
-                        PrintDot();
-                        Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromDays(10).TotalMilliseconds);
-                    }, creationOptions: TaskCreationOptions.LongRunning);
-            }
-
-            Task<string>[] tasks = new Task<string>[taskCount];
-            for (int i = 0; i < taskCount; i++)
-            {
-                var task = TaskService.GetStringWithTaskRunAsync($"Task {i}");
-                tasks[i] = task;
-            }
-
+            //foreach (var task in tasks)
+            //{
+            //    await task;
+            //}
             await Task.WhenAll(tasks);
             stopwatch.Stop();
 

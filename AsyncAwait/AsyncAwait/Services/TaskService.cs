@@ -134,9 +134,9 @@ namespace AsyncAwait.Services
 
         public Task GetFireAndForgetTask([CallerMemberName] string taskName = default,
             int delaySeconds = 2,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default,
+            Action taskAction = default)
         {
-
             Task fireAndForgetTask = default;
             fireAndForgetTask = Task.Run(() =>
             {
@@ -150,6 +150,7 @@ namespace AsyncAwait.Services
 
                     cancellationToken.ThrowIfCancellationRequested();
                 }
+                taskAction?.Invoke();
             }, cancellationToken: cancellationToken);
 
             RaiseTaskCreated(fireAndForgetTask, taskName);
@@ -180,14 +181,35 @@ namespace AsyncAwait.Services
             Action taskAction = default)
         {
             var taskCompletionSource = new TaskCompletionSource<string>();
+            var tcsTask = taskCompletionSource.Task;
+            RaiseTaskCreated(tcsTask, taskName);
 
-            var taskCompletionSourceTask = Task.Run(() =>
+            tcsTask.ContinueWith(completedTcsTask =>
+            {
+                if (completedTcsTask.IsCanceled)
+                {
+                    RaiseTaskCancelled(completedTcsTask, taskName);
+                }
+                else if (completedTcsTask.IsFaulted)
+                {
+                    RaiseTaskFaulted(completedTcsTask, taskName);
+                }
+                else
+                {
+                    RaiseTaskCompleted(completedTcsTask, taskName);
+                }
+            });
+
+            var internalTask = Task.Run(() =>
             {
                 try
                 {
-                    Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+                    //await Task.Delay((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
 
-                    taskAction?.Invoke();
+                    Thread.Sleep((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+
+                    //taskAction?.Invoke();
+                    //throw new Exception("My Exception");
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -204,25 +226,26 @@ namespace AsyncAwait.Services
                 }
             });
 
-            RaiseTaskCreated(taskCompletionSourceTask, taskName);
+            var internalTaskName = "Internal Task";
 
-            taskCompletionSourceTask.ContinueWith(completedGetStringTask =>
+            RaiseTaskCreated(internalTask, taskName: internalTaskName);
+            internalTask.ContinueWith(completedInternalTask =>
             {
-                if (completedGetStringTask.IsCanceled)
+                if (completedInternalTask.IsCanceled)
                 {
-                    RaiseTaskCancelled(completedGetStringTask, taskName);
+                    RaiseTaskCancelled(completedInternalTask, taskName: internalTaskName);
                 }
-                else if (completedGetStringTask.IsFaulted)
+                else if (completedInternalTask.IsFaulted)
                 {
-                    RaiseTaskFaulted(completedGetStringTask, taskName);
+                    RaiseTaskFaulted(completedInternalTask, taskName: internalTaskName);
                 }
                 else
                 {
-                    RaiseTaskCompleted(completedGetStringTask, taskName);
+                    RaiseTaskCompleted(completedInternalTask, taskName: internalTaskName);
                 }
             });
 
-            return taskCompletionSource.Task;
+            return tcsTask;
         }
         public Task<string> GetStringWithTaskCompletionSourceTheWrongWay(string taskName = default,
             int delaySeconds = 2,
@@ -231,33 +254,10 @@ namespace AsyncAwait.Services
             Action taskAction = default)
         {
             var taskCompletionSource = new TaskCompletionSource<string>();
+            var tcsTask = taskCompletionSource.Task;
+            RaiseTaskCreated(tcsTask, taskName);
 
-            var taskCompletionSourceTask = Task.Run(() =>
-            {
-                //try
-                //{
-                Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
-
-                taskAction?.Invoke();
-
-                //if (cancellationToken.IsCancellationRequested)
-                //{
-                //    taskCompletionSource.TrySetCanceled(cancellationToken);
-                //}
-                //else
-                //{
-                taskCompletionSource.TrySetResult(taskResult);
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    taskCompletionSource.TrySetException(ex);
-                //}
-            });
-
-            RaiseTaskCreated(taskCompletionSourceTask, taskName);
-
-            taskCompletionSourceTask.ContinueWith(completedGetStringTask =>
+            tcsTask.ContinueWith(completedGetStringTask =>
             {
                 if (completedGetStringTask.IsCanceled)
                 {
@@ -270,6 +270,48 @@ namespace AsyncAwait.Services
                 else
                 {
                     RaiseTaskCompleted(completedGetStringTask, taskName);
+                }
+            });
+
+            var internalTask = Task.Run(() =>
+            {
+                //try
+                //{
+                Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+                //await Task.Delay((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
+                //taskAction?.Invoke();
+
+                //if (cancellationToken.IsCancellationRequested)
+                //{
+                //    taskCompletionSource.TrySetCanceled(cancellationToken);
+                //}
+                //else
+                //{
+                //taskCompletionSource.TrySetResult(taskResult);
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    taskCompletionSource.TrySetException(ex);
+                //}
+            });
+
+            var internalTaskName = "Internal Task";
+
+            RaiseTaskCreated(internalTask, taskName: internalTaskName);
+            internalTask.ContinueWith(completedGetStringTask =>
+            {
+                if (completedGetStringTask.IsCanceled)
+                {
+                    RaiseTaskCancelled(completedGetStringTask, taskName: internalTaskName);
+                }
+                else if (completedGetStringTask.IsFaulted)
+                {
+                    RaiseTaskFaulted(completedGetStringTask, taskName: internalTaskName);
+                }
+                else
+                {
+                    RaiseTaskCompleted(completedGetStringTask, taskName: internalTaskName);
                 }
             });
 
