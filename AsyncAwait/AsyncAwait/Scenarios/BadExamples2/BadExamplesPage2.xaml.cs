@@ -54,9 +54,12 @@ namespace AsyncAwait.Views
             VM.ClearStatus();
             VM.PrintStatus("Button Clicked EventHandler Starting");
             VM.PrintThreadCheck();
-            await VM.TaskService.GetStringWithTaskRunAsync();
-            VM.PrintThreadCheck();
-            StatusLabel.Text += "Updated StatusLabel from UI thread!";
+            await VM.TaskService.GetStringWithTaskRunAsync().ConfigureAwait(false); //If there was no configure await, execution would continue on the UI thread
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                VM.PrintThreadCheck();
+                StatusLabel.Text += "Updated StatusLabel from UI thread!";
+            });
             VM.PrintStatus("Button Clicked EventHandler Ending");
         }
     }

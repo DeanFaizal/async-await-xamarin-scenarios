@@ -12,10 +12,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="4*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="7*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <ListView IsVisible="False" ItemsSource="{Binding ListItems}"/>
@@ -24,13 +21,7 @@
                 <Label LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
             </ScrollView>
             <Button Grid.Row="1" Command="{Binding BadLongRunningTaskCommand}" Text="Bad LongRunningTask"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding GoodLongRunningTaskCommand}" Text="Good LongRunningTask"/>
-            <!--<Button Grid.Row="2"  Command="{Binding }" Text=""/>
-            <Button  Grid.Row="2" Grid.Column="1"  Command="{Binding }" Text=" "/>
-            <Button  Grid.Row="3"  Command="{Binding }" Text=""/>
-            <Button Grid.Row="3" Grid.Column="1"  Command="{Binding }" Text=""/>
-            <Button  Grid.Row="4"  Command="{Binding }" Text=""/>
-            <Button Grid.Row="4" Grid.Column="1"  Command="{Binding }" Text=""/>-->
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding }" Text=""/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

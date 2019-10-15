@@ -9,10 +9,12 @@ namespace AsyncAwait.ViewModels
         private string _text =
             @"Welcome to Async Await Scenarios in Xamarin!
 Use the main menu to get started.
+---------------------------------
+
 Scenarios to explore:
-===
+=================================
 Bad examples and how to fix them
-===
+=================================
 Bad Examples 1:
 - Invoking tasks
 - Awaiting multiple tasks
@@ -28,7 +30,9 @@ Bad Examples 2:
 Bad Examples 3:
 - Using LongRunningTask
 
-Other samples:
+=================================
+Other samples/experiments
+=================================
 - Executing tasks:
     - The various ways to execute a task without awaiting
 - Awaiting tasks:
@@ -38,9 +42,11 @@ Other samples:
 - Awaiting multiple tasks
 
 Resources:
-Any Stephen Toub blog post: https://devblogs.microsoft.com/dotnet/author/toub/
-Any Stephen Cleary blog post: https://blog.stephencleary.com/
+Channel9 Async Await: https://channel9.msdn.com/Tags/async
+Stephen Toub's blog posts: https://devblogs.microsoft.com/dotnet/author/toub/
+Stephen Cleary's blog posts: https://blog.stephencleary.com/
 Brandon Minnick's Async/Await talk: https://www.youtube.com/watch?v=J0mcYVxJEl0
+TPL Dataflow: https://channel9.msdn.com/Shows/Going+Deep/Stephen-Toub-Inside-TPL-Dataflow
 ";
         public string Text
         {
