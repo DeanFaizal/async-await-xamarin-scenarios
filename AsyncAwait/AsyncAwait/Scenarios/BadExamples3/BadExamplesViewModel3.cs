@@ -18,17 +18,19 @@ namespace AsyncAwait.ViewModels
             ClearStatus();
             PrintStatus("Command starting");
 
+            var taskCount = 100;
+            PrintStatus($"Running {taskCount} long running tasks that print a \".\" every second using Task.Run, then running {taskCount} tasks which complete in 2 seconds.");
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var taskCount = 100;
 
             Task[] longRunningTasks = new Task[taskCount];
 
             for (int i = 0; i < taskCount; i++)
             {
                 //Fire and forget long running task using Task.Run 
-                //For example purposes only. Real fire and forget tasks a way to be stopped.
+                //For example purposes only. Real fire and forget tasks should always have a cancel mechanism and exception handling!!
                 Task.Run(() =>
                 {
                     while (true)
@@ -61,18 +63,19 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            var taskCount = 100;
+            PrintStatus($"Running {taskCount} long running tasks that print a \".\" every second using Task.Factory.StartNew(action, TaskCreationOptions.LongRunning), then running {taskCount} tasks which complete in 2 seconds.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-
-            var taskCount = 100;
 
             Task[] longRunningTasks = new Task[taskCount];
 
             for (int i = 0; i < taskCount; i++)
             {
                 //Fire and forget long running task using Task.Factory.StartNew(()=>{}, TaskCreationOptions.LongRunning)
-                //For example purposes only. Real fire and forget tasks a way to be stopped.
+                //For example purposes only. Real fire and forget tasks should always have a cancel mechanism and exception handling!!
+                //Reference: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskcreationoptions?view=netframework-4.8
                 Task.Factory.StartNew(() =>
                 {
                     while (true)

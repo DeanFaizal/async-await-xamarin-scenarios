@@ -21,6 +21,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Try/Catch won't catch an exception for a fire and forget task!");
 
             try
             {
@@ -47,6 +48,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Use Task.ContinueWith to catch exceptions properly on fire and forget.");
 
             Action exceptionAction = () =>
             {
@@ -76,6 +78,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Running a 60s task with timeout on 3 seconds using Task.WaitAll(task, timeout)");
 
             var longRunningTask = TaskService.GetStringWithTaskRunAsync("60 second Task",
                    delaySeconds: 60,
@@ -99,6 +102,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Running a 60s task with timeout on 3 seconds using a cancellation token source");
 
             var longRunningTaskCompletionSource = new TaskCompletionSource<string>();
             var timeoutSeconds = 3;
@@ -137,6 +141,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Not setting exceptions on a TaskCompletionSource properly causes tasks to never complete. Always set the result, exception, or cancellation.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -184,6 +189,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Setting exceptions on TaskCompletionSources allows the exception to be handled.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();

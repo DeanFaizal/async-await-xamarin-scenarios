@@ -21,7 +21,7 @@
                 <Label LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
             </ScrollView>
             <Button Grid.Row="1" Command="{Binding BadLongRunningTaskCommand}" Text="Bad LongRunningTask"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding }" Text=""/>
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding GoodLongRunningTaskCommand}" Text="Good LongRunningTask"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
