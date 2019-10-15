@@ -1,8 +1,6 @@
 ﻿using MvvmHelpers.Commands;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,20 +19,25 @@ namespace AsyncAwait.ViewModels
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var taskCount = 1000;
+            var taskCount = 100;
 
             Task[] longRunningTasks = new Task[taskCount];
 
             for (int i = 0; i < taskCount; i++)
             {
-                //Fire and forget long running task
+                //Fire and forget long running task using Task.Run 
+                //For example purposes only. Real fire and forget tasks a way to be stopped.
                 Task.Run(() =>
                 {
-                    PrintDot();
-                    Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromDays(10).TotalMilliseconds);
+                    while (true)
+                    {
+                        Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+                        PrintDot();
+                    }
                 });
             }
 
+            //Then run normal Task.Runs
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {
@@ -57,27 +60,28 @@ namespace AsyncAwait.ViewModels
             ClearStatus();
             PrintStatus("Command starting");
 
-
-            ClearStatus();
-            PrintStatus("Command starting");
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var taskCount = 1000;
+            var taskCount = 100;
 
             Task[] longRunningTasks = new Task[taskCount];
 
             for (int i = 0; i < taskCount; i++)
             {
-                //Fire and forget long running task
+                //Fire and forget long running task using Task.Factory.StartNew(()=>{}, TaskCreationOptions.LongRunning)
+                //For example purposes only. Real fire and forget tasks a way to be stopped.
                 Task.Factory.StartNew(() =>
                 {
-                    PrintDot();
-                    Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromDays(10).TotalMilliseconds);
+                    while (true)
+                    {
+                        Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(1).TotalMilliseconds);
+                        PrintDot();
+                    }
                 }, creationOptions: TaskCreationOptions.LongRunning);
             }
 
+            //Then run normal Task.Runs
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {

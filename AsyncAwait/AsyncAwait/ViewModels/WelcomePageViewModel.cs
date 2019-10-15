@@ -10,16 +10,37 @@ namespace AsyncAwait.ViewModels
             @"Welcome to Async Await Scenarios in Xamarin!
 Use the main menu to get started.
 Scenarios to explore:
-1. Synchronous Tasks. 
-2. Async and await.
-3. Configure await.
-4. Awaiting multiple Tasks.
-5. Asyncifying methods.
-6. Exception handling.
-7. Long running Tasks.
-8. ValueTasks.
+===
+Bad examples and how to fix them
+===
+Bad Examples 1:
+- Invoking tasks
+- Awaiting multiple tasks
+- Returning tasks
+- Threading
 
-. Resources.
+Bad Examples 2:
+- Updating VM properties
+- Handling exceptions
+- Timing out tasks
+- Using TaskCompletionSource
+
+Bad Examples 3:
+- Using LongRunningTask
+
+Other samples:
+- Executing tasks:
+    - The various ways to execute a task without awaiting
+- Awaiting tasks:
+    - How to await tasks properly
+- Configure await:
+    - Using configure await
+- Awaiting multiple tasks
+
+Resources:
+Any Stephen Toub blog post: https://devblogs.microsoft.com/dotnet/author/toub/
+Any Stephen Cleary blog post: https://blog.stephencleary.com/
+Brandon Minnick's Async/Await talk: https://www.youtube.com/watch?v=J0mcYVxJEl0
 ";
         public string Text
         {

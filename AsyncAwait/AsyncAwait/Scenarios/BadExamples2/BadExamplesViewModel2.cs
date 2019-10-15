@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -207,27 +208,41 @@ namespace AsyncAwait.ViewModels
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            Action exceptionAction = () => throw new Exception("My Exception");
 
             var taskCount = 10;
             Task<string>[] tasks = new Task<string>[taskCount];
             for (int i = 0; i < taskCount; i++)
             {
+                var currentException = $"Exception{i}";
+                Action exceptionAction = () => throw new Exception(currentException);
+
                 var task = TaskService.GetStringWithTaskCompletionSourceTheWrongWay($"Task {i}",
-                    delaySeconds: 2,
+                    delaySeconds: i,
                     taskResult: $"Task{i}Result",
                     cancellationToken: default,
                     taskAction: exceptionAction);
                 tasks[i] = task;
             }
 
-            //foreach (var task in tasks)
-            //{
-            //    await task;
-            //}
-            await Task.WhenAll(tasks);
-            stopwatch.Stop();
+            try
+            {
+                await Task.WhenAll(tasks);
+            }
+            catch (Exception ex)
+            {
+                PrintStatus("Catch(Exception ex) only exposes the first exception.");
+                PrintStatus($"An exception occurred: {ex.Message}");
 
+                PrintStatus("Get all the exceptions from the tasks collection");
+                var exceptions = tasks.Where(a => a.Exception != null)
+                    .Select(a => a.Exception);
+                foreach (var exception in exceptions)
+                {
+                    PrintStatus($"{exception.Message}");
+                }
+            }
+
+            stopwatch.Stop();
             PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
         }));
 
@@ -240,27 +255,42 @@ namespace AsyncAwait.ViewModels
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            Action exceptionAction = () => throw new Exception("My Exception");
 
             var taskCount = 10;
             Task<string>[] tasks = new Task<string>[taskCount];
+
             for (int i = 0; i < taskCount; i++)
             {
+                var currentException = $"Exception{i}";
+                Action exceptionAction = () => throw new Exception(currentException);
+
                 var task = TaskService.GetStringWithTaskCompletionSource($"Task {i}",
-                    delaySeconds: 2,
+                    delaySeconds: i,
                     taskResult: $"Task{i}Result",
                     cancellationToken: default,
                     taskAction: exceptionAction);
                 tasks[i] = task;
             }
 
-            //foreach (var task in tasks)
-            //{
-            //    await task;
-            //}
-            await Task.WhenAll(tasks);
-            stopwatch.Stop();
+            try
+            {
+                await Task.WhenAll(tasks);
+            }
+            catch (Exception ex)
+            {
+                PrintStatus("Catch(Exception ex) only exposes the first exception.");
+                PrintStatus($"An exception occurred: {ex.Message}");
 
+                PrintStatus("Get all the exceptions from the tasks collection");
+                var exceptions = tasks.Where(a => a.Exception != null)
+                    .Select(a => a.Exception);
+                foreach (var exception in exceptions)
+                {
+                    PrintStatus($"{exception.Message}");
+                }
+            }
+
+            stopwatch.Stop();
             PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
         }));
 

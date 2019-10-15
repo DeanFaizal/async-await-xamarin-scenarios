@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.5.1-beta" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
     <PackageReference Include="Xamarin.Forms" Version="4.2.0.848062" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
   </ItemGroup>
@@ -24,13 +25,13 @@
     <EmbeddedResource Update="Scenarios\MultipleTasks\MultipleTasksPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\BadExamplesPage.xaml">
+    <EmbeddedResource Update="Scenarios\BadExamples1\BadExamplesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\BadExamplesPage2.xaml">
+    <EmbeddedResource Update="Scenarios\BadExamples2\BadExamplesPage2.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\BadExamplesPage3.xaml">
+    <EmbeddedResource Update="Scenarios\BadExamples3\BadExamplesPage3.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\WelcomePage.xaml">
@@ -40,8 +41,5 @@
 
   <ItemGroup>
     <Folder Include="Scenarios\HowNotToUseAsync\" />
-    <Folder Include="Scenarios\BadExamples1\" />
-    <Folder Include="Scenarios\BadExamples2\" />
-    <Folder Include="Scenarios\BadExamples3\" />
   </ItemGroup>
 </Project>

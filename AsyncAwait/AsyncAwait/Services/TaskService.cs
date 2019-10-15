@@ -204,12 +204,9 @@ namespace AsyncAwait.Services
             {
                 try
                 {
-                    //await Task.Delay((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
-
                     Thread.Sleep((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
 
-                    //taskAction?.Invoke();
-                    //throw new Exception("My Exception");
+                    taskAction?.Invoke();
 
                     if (cancellationToken.IsCancellationRequested)
                     {
@@ -223,10 +220,11 @@ namespace AsyncAwait.Services
                 catch (Exception ex)
                 {
                     taskCompletionSource.TrySetException(ex);
+                    throw;
                 }
             });
 
-            var internalTaskName = "Internal Task";
+            var internalTaskName = $"Internal - {taskName}";
 
             RaiseTaskCreated(internalTask, taskName: internalTaskName);
             internalTask.ContinueWith(completedInternalTask =>
@@ -275,28 +273,12 @@ namespace AsyncAwait.Services
 
             var internalTask = Task.Run(() =>
             {
-                //try
-                //{
                 Thread.Sleep(millisecondsTimeout: (int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
-                //await Task.Delay((int)TimeSpan.FromSeconds(delaySeconds).TotalMilliseconds);
-                //taskAction?.Invoke();
-
-                //if (cancellationToken.IsCancellationRequested)
-                //{
-                //    taskCompletionSource.TrySetCanceled(cancellationToken);
-                //}
-                //else
-                //{
-                //taskCompletionSource.TrySetResult(taskResult);
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    taskCompletionSource.TrySetException(ex);
-                //}
+                taskAction?.Invoke(); //This doesn't take into account taskAction can throw an exception so it appears to be "swallowed"
+                taskCompletionSource.TrySetResult(taskResult);
             });
 
-            var internalTaskName = "Internal Task";
+            var internalTaskName = $"Internal - {taskName}";
 
             RaiseTaskCreated(internalTask, taskName: internalTaskName);
             internalTask.ContinueWith(completedGetStringTask =>
@@ -316,6 +298,45 @@ namespace AsyncAwait.Services
             });
 
             return taskCompletionSource.Task;
+        }
+
+
+        private string _valueTaskResult;
+
+        public ValueTask<string> GetStringWithValueTask([CallerMemberName] string taskName = default,
+            string taskResult = "Task Result",
+            int delaySeconds = 2)
+        {
+            if (string.IsNullOrEmpty(_valueTaskResult))
+            {
+                var getStringTask = GetStringWithTaskRunAsync(taskName, delaySeconds: delaySeconds, taskResult: taskResult);
+                getStringTask.ContinueWith((completedTask) =>
+                {
+                    _valueTaskResult = completedTask.Result;
+                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                return new ValueTask<string>(getStringTask);
+            }
+
+            return new ValueTask<string>(_valueTaskResult);
+        }
+
+        private string _taskResult;
+
+        public Task<string> GetStringWithoutValueTask([CallerMemberName] string taskName = default,
+            string taskResult = "Task Result",
+            int delaySeconds = 2)
+        {
+            if (string.IsNullOrEmpty(_taskResult))
+            {
+                var getStringTask = GetStringWithTaskRunAsync(taskName, delaySeconds: delaySeconds, taskResult: taskResult);
+                getStringTask.ContinueWith((completedTask) =>
+                {
+                    _taskResult = completedTask.Result;
+                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                return getStringTask;
+            }
+
+            return Task.FromResult(_taskResult);
         }
     }
 }
