@@ -20,11 +20,11 @@
             </Grid.RowDefinitions>
             <ScrollView Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand"
                         VerticalOptions="FillAndExpand">
-                <Label LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
+                <Label x:Name="StatusLabel" LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
             </ScrollView>
             <ListView IsVisible="False" Opacity="0.5" ItemsSource="{Binding ListItems}" Grid.Column="1"/>
-            <Button Grid.Row="1" Command="{Binding BadViewModelUpdateCommand}" Text="Bad UI update"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding GoodViewModelUpdateCommand}" Text="Good UI update"/>
+            <Button Grid.Row="1" Text="Bad UI update" Clicked="HandleBadUIUpdateClicked"/>
+            <Button Grid.Row="1" Grid.Column="1" Text="Good UI update" Clicked="HandleGoodUIUpdateClicked"/>
             <Button Grid.Row="2"  Command="{Binding BadExceptionHandling}" Text="Bad Exception Handling"/>
             <Button  Grid.Row="2" Grid.Column="1"  Command="{Binding GoodExceptionHandling}" Text="Good exception handling"/>
             <Button  Grid.Row="3"  Command="{Binding BadTimeoutCommand}" Text="Bad timeout"/>

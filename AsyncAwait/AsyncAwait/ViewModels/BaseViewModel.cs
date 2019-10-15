@@ -35,13 +35,13 @@ namespace AsyncAwait.ViewModels
             PrintStatus($"{status.Status}");
         }
 
-        protected void ClearStatus() => Status = string.Empty;
+        public void ClearStatus() => Status = string.Empty;
 
-        protected void PrintStatus(string input) => Status += $"{input}\n";
+        public void PrintStatus(string input) => Status += $"{input}\n";
 
-        protected void PrintDot() => Status += ".";
+        public void PrintDot() => Status += ".";
 
-        protected void PrintThreadCheck(bool addSpacing = true) => Status += $"{(addSpacing ? "\n" : "")}" +
+        public void PrintThreadCheck(bool addSpacing = true) => Status += $"{(addSpacing ? "\n" : "")}" +
             $"==={(MainThread.IsMainThread ? "Is" : "Not")} on MainThread===\n" +
             $"{(addSpacing ? "\n" : "")}";
 
