@@ -31,7 +31,7 @@
 
     <!-- Your Pages -->
     <FlyoutItem Title="Welcome Page">
-        <views:WelcomePage/>
+        <ShellContent ContentTemplate="{DataTemplate views:WelcomePage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Bad Examples 1">
         <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage}"/>
@@ -43,16 +43,16 @@
         <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage3}"/>
     </FlyoutItem>
     <FlyoutItem Title="Executing Tasks">
-        <views:ExecutingTasksPage/>
+        <ShellContent ContentTemplate="{DataTemplate views:ExecutingTasksPage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Awaiting Tasks">
-        <views:AwaitingTasksPage/>
+        <ShellContent ContentTemplate="{DataTemplate views:AwaitingTasksPage}"/>
     </FlyoutItem>
     <FlyoutItem Title="ConfigureAwait">
-        <views:ConfigureAwaitPage/>
+        <ShellContent ContentTemplate="{DataTemplate views:ConfigureAwaitPage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Multiple Tasks">
-        <views:MultipleTasksPage/>
+        <ShellContent ContentTemplate="{DataTemplate views:MultipleTasksPage}"/>
     </FlyoutItem>
 
 

@@ -22,7 +22,6 @@
                         VerticalOptions="FillAndExpand">
                 <Label x:Name="StatusLabel" LineBreakMode="WordWrap" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text="{Binding Status}" Margin="8"/>
             </ScrollView>
-            <ListView IsVisible="False" Opacity="0.5" ItemsSource="{Binding ListItems}" Grid.Column="1"/>
             <Button Grid.Row="1" Text="Bad UI update" Clicked="HandleBadUIUpdateClicked"/>
             <Button Grid.Row="1" Grid.Column="1" Text="Good UI update" Clicked="HandleGoodUIUpdateClicked"/>
             <Button Grid.Row="2"  Command="{Binding BadExceptionHandling}" Text="Bad Exception Handling"/>

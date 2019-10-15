@@ -10,13 +10,14 @@ namespace AsyncAwait.ViewModels
 {
     public class BadExamplesViewModel : BaseViewModel
     {
-        #region Example: Not awaiting Task
+        #region Example: Not awaiting Task - The intent is to use the result after the task without knowing the consequences.
 
         private Command _badTaskInvokeCommand;
         public Command BadTaskInvokeCommand => _badTaskInvokeCommand ?? (_badTaskInvokeCommand = new Command(() =>
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("This locks up the UI.");
 
             var taskResult = TaskService.GetStringWithTaskRunAsync("Using Task.Result").Result;
             PrintStatus("Task Completed with result: {taskResult}");
@@ -29,6 +30,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("This allows the task to run on a background thread without locking the UI.");
 
             var taskResult = await TaskService.GetStringWithTaskRunAsync("Using await");
 
@@ -39,13 +41,14 @@ namespace AsyncAwait.ViewModels
 
 
 
-        #region Example: Multiple task execution
+        #region Example: Multiple task execution - The intent is to await multiple tasks. 
 
         private AsyncCommand _badMultipleTaskExecutionCommand;
         public AsyncCommand BadMultipleTaskExecutionCommand => _badMultipleTaskExecutionCommand ?? (_badMultipleTaskExecutionCommand = new AsyncCommand(async () =>
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Awaiting tasks in a for loop causes the tasks to be awaited synchronously (one after another).");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -66,6 +69,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Awaiting Task.WhenAll lets all the tasks run asynchronously.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -95,6 +99,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Return await causes additional overhead in context switching.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -118,6 +123,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Returning the task directly is faster.");
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -147,6 +153,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Not using ConfigureAwait(false) causes execution to continue on the UI thread.");
 
             PrintThreadCheck();
             await TaskService.GetStringWithTaskRunAsync();
@@ -163,6 +170,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
+            PrintStatus("Not using ConfigureAwait(false) allows execution to continue on a background thread.");
 
             PrintThreadCheck();
             await TaskService.GetStringWithTaskRunAsync().ConfigureAwait(false);

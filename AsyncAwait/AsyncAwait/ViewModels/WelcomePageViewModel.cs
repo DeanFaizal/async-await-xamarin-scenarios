@@ -22,7 +22,7 @@ Bad Examples 1:
 - Threading
 
 Bad Examples 2:
-- Updating VM properties
+- Updating UI properties
 - Handling exceptions
 - Timing out tasks
 - Using TaskCompletionSource
@@ -42,11 +42,21 @@ Other samples/experiments
 - Awaiting multiple tasks
 
 Resources:
+
 Channel9 Async Await: https://channel9.msdn.com/Tags/async
+
 Stephen Toub's blog posts: https://devblogs.microsoft.com/dotnet/author/toub/
+
 Stephen Cleary's blog posts: https://blog.stephencleary.com/
+
 Brandon Minnick's Async/Await talk: https://www.youtube.com/watch?v=J0mcYVxJEl0
+
 TPL Dataflow: https://channel9.msdn.com/Shows/Going+Deep/Stephen-Toub-Inside-TPL-Dataflow
+
+
+
+
+
 ";
         public string Text
         {
