@@ -16,12 +16,13 @@ namespace AsyncAwait.ViewModels
     {
         #region Example: Exception Handling
 
-        private AsyncCommand _badExceptionHandling;
-        public AsyncCommand BadExceptionHandling => _badExceptionHandling ?? (_badExceptionHandling = new AsyncCommand(async () =>
+        private Command _badExceptionHandling;
+        public Command BadExceptionHandling => _badExceptionHandling ?? (_badExceptionHandling = new Command(() =>
         {
             ClearStatus();
             PrintStatus("Command starting");
             PrintStatus("Try/Catch won't catch an exception for a fire and forget task!");
+            PrintStatus("Note we aren't using async await");
 
             try
             {
@@ -43,12 +44,13 @@ namespace AsyncAwait.ViewModels
             PrintStatus("Command ending");
         }));
 
-        private AsyncCommand _goodExceptionHandling;
-        public AsyncCommand GoodExceptionHandling => _goodExceptionHandling ?? (_goodExceptionHandling = new AsyncCommand(async () =>
+        private Command _goodExceptionHandling;
+        public Command GoodExceptionHandling => _goodExceptionHandling ?? (_goodExceptionHandling = new Command(() =>
         {
             ClearStatus();
             PrintStatus("Command starting");
             PrintStatus("Use Task.ContinueWith to catch exceptions properly on fire and forget.");
+            PrintStatus("Note we aren't using async await");
 
             Action exceptionAction = () =>
             {
@@ -65,7 +67,35 @@ namespace AsyncAwait.ViewModels
              }, continuationOptions: TaskContinuationOptions.OnlyOnFaulted);
 
             PrintStatus("Command ending");
+        })); 
+        
+        private Command _goodExceptionHandling2;
+        public Command GoodExceptionHandling2 => _goodExceptionHandling2 ?? (_goodExceptionHandling2 = new Command(async() =>
+        {
+            ClearStatus();
+            PrintStatus("Command starting");
+            PrintStatus("Use Task.ContinueWith to catch exceptions properly on fire and forget.");
+
+            Action exceptionAction = () =>
+            {
+                throw new Exception("My Exception");
+            };
+
+            try
+            {
+                await TaskService.GetFireAndForgetTask(taskName: "TaskWithException",
+                    delaySeconds: 2,
+                    cancellationToken: default,
+                    taskAction: exceptionAction);
+            }
+            catch (Exception ex)
+            {
+                PrintStatus($"Exception occurred: {ex.Message}");
+            }
+
+            PrintStatus("Command ending");
         }));
+
 
         #endregion
 

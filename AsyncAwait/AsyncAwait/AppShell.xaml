@@ -42,6 +42,9 @@
     <FlyoutItem Title="Bad Examples 3">
         <ShellContent ContentTemplate="{DataTemplate views:BadExamplesPage3}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Bad Constructor">
+        <ShellContent ContentTemplate="{DataTemplate views:BadConstructorPage}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Executing Tasks">
         <ShellContent ContentTemplate="{DataTemplate views:ExecutingTasksPage}"/>
     </FlyoutItem>
