@@ -8,9 +8,7 @@
        Title="AsyncAwait"
        x:Class="AsyncAwait.AppShell">
 
-    <!-- 
-        Styles and Resources 
-    -->
+    <!--Styles and Resources-->
     <Shell.Resources>
         <ResourceDictionary>
             <Color x:Key="NavigationPrimary">#2196F3</Color>
@@ -57,37 +55,7 @@
     <FlyoutItem Title="Multiple Tasks">
         <ShellContent ContentTemplate="{DataTemplate views:MultipleTasksPage}"/>
     </FlyoutItem>
-
-
-
-    <!-- Optional Templates 
-    // These may be provided inline as below or as separate classes.
-
-    // This header appears at the top of the Flyout.
-    <Shell.FlyoutHeaderTemplate>
-        <DataTemplate>
-            <Grid>ContentHere</Grid>
-        </DataTemplate>
-    </Shell.FlyoutHeaderTemplate>
-
-    // ItemTemplate is for ShellItems as displayed in a Flyout
-    <Shell.ItemTemplate>
-        <DataTemplate>
-            <ContentView>
-                Bindable Properties: Title, Icon
-            </ContentView>
-        </DataTemplate>
-    </Shell.ItemTemplate>
-
-    // MenuItemTemplate is for MenuItems as displayed in a Flyout
-    <Shell.MenuItemTemplate>
-        <DataTemplate>
-            <ContentView>
-                Bindable Properties: Text, Icon
-            </ContentView>
-        </DataTemplate>
-    </Shell.MenuItemTemplate>
-
-    -->
-
+    <FlyoutItem Title="Async Void">
+        <ShellContent ContentTemplate="{DataTemplate views:AsyncVoidPage}"/>
+    </FlyoutItem>
 </Shell>
