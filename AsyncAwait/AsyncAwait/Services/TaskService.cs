@@ -48,7 +48,7 @@ namespace AsyncAwait.Services
             TaskCancelled?.Invoke(this, new TaskStatusChangedEventArgs(task, status));
         }
 
-        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string taskName = default, int delaySeconds = 2, string taskResult = "Task Result")
+        public Task<string> GetStringWithNewTaskAsync([CallerMemberName] string taskName = default, int delaySeconds = 1, string taskResult = "Task Result")
         {
             Task<string> getStringTask = default;
             getStringTask = new Task<string>(() =>
@@ -80,7 +80,7 @@ namespace AsyncAwait.Services
         }
 
         public Task<string> GetStringWithTaskRunAsync([CallerMemberName] string taskName = default,
-            int delaySeconds = 2,
+            int delaySeconds = 1,
             string taskResult = "Task Result",
             CancellationToken cancellationToken = default,
             Action taskAction = default)
@@ -126,14 +126,14 @@ namespace AsyncAwait.Services
         }
 
         public async Task<string> AwaitStringWithTaskRunAsync([CallerMemberName] string taskName = default,
-            int delaySeconds = 2,
+            int delaySeconds = 1,
             string taskResult = "Task Result")
         {
             return await GetStringWithTaskRunAsync(taskName);
         }
 
         public Task GetFireAndForgetTask([CallerMemberName] string taskName = default,
-            int delaySeconds = 2,
+            int delaySeconds = 1,
             CancellationToken cancellationToken = default,
             Action taskAction = default)
         {
@@ -175,7 +175,7 @@ namespace AsyncAwait.Services
         }
 
         public Task<string> GetStringWithTaskCompletionSource([CallerMemberName] string taskName = default,
-            int delaySeconds = 2,
+            int delaySeconds = 1,
             string taskResult = "Task Result",
             CancellationToken cancellationToken = default,
             Action taskAction = default)
@@ -246,7 +246,7 @@ namespace AsyncAwait.Services
             return tcsTask;
         }
         public Task<string> GetStringWithTaskCompletionSourceTheWrongWay(string taskName = default,
-            int delaySeconds = 2,
+            int delaySeconds = 1,
             string taskResult = "Task Result",
             CancellationToken cancellationToken = default,
             Action taskAction = default)
@@ -305,7 +305,7 @@ namespace AsyncAwait.Services
 
         public ValueTask<string> GetStringWithValueTask([CallerMemberName] string taskName = default,
             string taskResult = "Task Result",
-            int delaySeconds = 2)
+            int delaySeconds = 1)
         {
             if (string.IsNullOrEmpty(_valueTaskResult))
             {
@@ -324,7 +324,7 @@ namespace AsyncAwait.Services
 
         public Task<string> GetStringWithoutValueTask([CallerMemberName] string taskName = default,
             string taskResult = "Task Result",
-            int delaySeconds = 2)
+            int delaySeconds = 1)
         {
             if (string.IsNullOrEmpty(_taskResult))
             {

@@ -28,20 +28,14 @@ namespace AsyncAwait.Views
         /// <param name="e"></param>
         public async void HandleBadUIUpdateClicked(object sender, EventArgs e)
         {
-            try
-            {
-                VM.ClearStatus();
-                VM.PrintStatus("Button Clicked EventHandler Starting");
-                VM.PrintThreadCheck();
-                await VM.TaskService.GetStringWithTaskRunAsync().ConfigureAwait(false);
-                VM.PrintThreadCheck();
-                StatusLabel.Text += "Updated StatusLabel from non-UI (background) thread!";
-                VM.PrintStatus("Button Clicked EventHandler Ending");
-            }
-            catch (Exception ex)
-            {
-                VM.PrintStatus($"An exception occurred: {ex.Message}");
-            }
+            VM.ClearStatus();
+            VM.PrintStatus("Button Clicked EventHandler Starting");
+            VM.PrintThreadCheck();
+            await VM.TaskService.GetStringWithTaskRunAsync().ConfigureAwait(false);
+
+            VM.PrintThreadCheck();
+            StatusLabel.Text += "Updated StatusLabel from non-UI (background) thread!";
+            VM.PrintStatus("Button Clicked EventHandler Ending");
         }
 
         /// <summary>

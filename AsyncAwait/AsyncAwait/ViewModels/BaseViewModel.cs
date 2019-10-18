@@ -37,7 +37,7 @@ namespace AsyncAwait.ViewModels
 
         public void ClearStatus() => Status = string.Empty;
 
-        public void PrintStatus(string input) => Status += $"{input}\n";
+        public void PrintStatus(string input) => Device.BeginInvokeOnMainThread(() => Status += $"{input}\n");
 
         public void PrintDot() => Status += ".";
 
