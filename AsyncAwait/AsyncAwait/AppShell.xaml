@@ -58,4 +58,7 @@
     <FlyoutItem Title="Async Void">
         <ShellContent ContentTemplate="{DataTemplate views:AsyncVoidPage}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Async Lazy">
+        <ShellContent ContentTemplate="{DataTemplate views:AsyncLazyPage}"/>
+    </FlyoutItem>
 </Shell>

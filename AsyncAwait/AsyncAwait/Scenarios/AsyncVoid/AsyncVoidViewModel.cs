@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Command = MvvmHelpers.Commands.Command;
 
 namespace AsyncAwait.ViewModels
@@ -33,7 +34,7 @@ namespace AsyncAwait.ViewModels
 
 
         private Command _asyncVoidTryCatchCommand;
-        public Command AsyncVoidTryCatchCommand => _asyncVoidTryCatchCommand ?? (_asyncVoidTryCatchCommand = new Command(() =>
+        public Command AsyncVoidTryCatchCommand => _asyncVoidTryCatchCommand ?? (_asyncVoidTryCatchCommand = new Command(async() =>
         {
             ClearStatus();
             PrintStatus("Command starting");
@@ -41,7 +42,7 @@ namespace AsyncAwait.ViewModels
             try
             {
                 PrintStatus("Command try block starting");
-                AsyncVoidMethodWithTryCatch();
+                await AsyncVoidMethodWithTryCatch();
                 PrintStatus("Command try block ending");
             }
             catch (Exception ex)
@@ -52,7 +53,7 @@ namespace AsyncAwait.ViewModels
             PrintStatus("Command ending");
         }));
 
-        private async void AsyncVoidMethodWithTryCatch()
+        private async Task AsyncVoidMethodWithTryCatch()
         {
             PrintStatus($"{nameof(AsyncVoidMethod)} starting");
             try

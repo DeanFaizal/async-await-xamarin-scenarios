@@ -17,7 +17,7 @@ namespace AsyncAwait.ViewModels
         {
             ClearStatus();
             PrintStatus("Command starting");
-            PrintStatus("This locks up the UI.");
+            PrintStatus("This locks up the UI. Never use .Result");
 
             var taskResult = TaskService.GetStringWithTaskRunAsync("Using Task.Result").Result;
             PrintStatus("Task Completed with result: {taskResult}");
@@ -115,7 +115,9 @@ namespace AsyncAwait.ViewModels
             await Task.WhenAll(tasks);
             stopwatch.Stop();
 
-            PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
+            var completedStatus = $"Command ending after: {stopwatch.Elapsed.TotalSeconds}s";
+            PrintStatus(completedStatus);
+            Console.WriteLine(completedStatus);
         }));
 
         private AsyncCommand _goodTaskReturnCommand;
@@ -139,7 +141,9 @@ namespace AsyncAwait.ViewModels
             await Task.WhenAll(tasks);
             stopwatch.Stop();
 
-            PrintStatus($"Command ending after: {stopwatch.Elapsed.TotalSeconds}s");
+            var completedStatus = $"Command ending after: {stopwatch.Elapsed.TotalSeconds}s";
+            PrintStatus(completedStatus);
+            Console.WriteLine(completedStatus);
         }));
 
         #endregion
